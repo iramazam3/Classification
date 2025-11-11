@@ -1,6 +1,5 @@
 // Run MLP model
 async function runWeatherMLP() {
-  // Assuming 10 input features (update if different)
   const x = new Float32Array(10);
   for (let i = 0; i < 10; i++) {
     x[i] = parseFloat(document.getElementById(`input${i}`).value) || 0;
@@ -9,7 +8,7 @@ async function runWeatherMLP() {
   const tensorX = new ort.Tensor("float32", x, [1, 10]);
 
   try {
-    const session = await ort.InferenceSession.create("./MLP_WeatherData.onnx?v=" + Date.now());
+    const session = await ort.InferenceSession.create("./MLP_WeatherData.onnx");
     const results = await session.run({ input: tensorX });
     const output = results.output.data;
 
@@ -35,7 +34,7 @@ async function runWeatherMLP() {
 
 
 
-// Run Deep model
+// Run Deep Learning model
 async function runWeatherDeep() {
   const x = new Float32Array(10);
   for (let i = 0; i < 10; i++) {
@@ -45,7 +44,7 @@ async function runWeatherDeep() {
   const tensorX = new ort.Tensor("float32", x, [1, 10]);
 
   try {
-    const session = await ort.InferenceSession.create("./Deep_WeatherData.onnx?v=" + Date.now());
+    const session = await ort.InferenceSession.create("./Deep_WeatherData.onnx");
     const results = await session.run({ input: tensorX });
     const output = results.output.data;
 
