@@ -12,20 +12,16 @@ async function runWeatherMLP() {
     const results = await session.run({ input: tensorX });
     const output = results.output.data;
 
-    // Get index of highest probability
+    // Get index of highest output value
     const predictedIndex = output.indexOf(Math.max(...output));
     const classes = ["Cloudy", "Rainy", "Snowy", "Sunny"]; 
     const predictedClass = classes[predictedIndex];
 
-    // Render predictions
+    // Render prediction
     const predictions = document.getElementById("predictionsMLP");
     predictions.innerHTML = `
-      <h3>🌦 MLP Model Prediction</h3>
-      <p><b>Predicted Weather:</b> ${predictedClass}</p>
-      <p><b>Confidence Scores:</b></p>
-      <table>
-        ${output.map((v, i) => `<tr><td>${classes[i]}</td><td>${v.toFixed(3)}</td></tr>`).join("")}
-      </table>`;
+      <h3>MLP Model Prediction</h3>
+      <p><b>Predicted Weather:</b> ${predictedClass}</p>`;
   } catch (e) {
     console.error("ONNX runtime error:", e);
     alert("Error: " + e.message);
@@ -48,18 +44,16 @@ async function runWeatherDeep() {
     const results = await session.run({ input: tensorX });
     const output = results.output.data;
 
+    // Get index of highest output value
     const predictedIndex = output.indexOf(Math.max(...output));
     const classes = ["Cloudy", "Rainy", "Snowy", "Sunny"];
     const predictedClass = classes[predictedIndex];
 
+    // Render prediction
     const predictions = document.getElementById("predictionsDeep");
     predictions.innerHTML = `
       <h3>Deep Learning Model Prediction</h3>
-      <p><b>Predicted Weather:</b> ${predictedClass}</p>
-      <p><b>Confidence Scores:</b></p>
-      <table>
-        ${output.map((v, i) => `<tr><td>${classes[i]}</td><td>${v.toFixed(3)}</td></tr>`).join("")}
-      </table>`;
+      <p><b>Predicted Weather:</b> ${predictedClass}</p>`;
   } catch (e) {
     console.error("ONNX runtime error:", e);
     alert("Error: " + e.message);
