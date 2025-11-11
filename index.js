@@ -9,7 +9,7 @@ async function runWeatherMLP() {
   const tensorX = new ort.Tensor("float32", x, [1, 10]);
 
   try {
-    const session = await ort.InferenceSession.create("./Weather_MLP.onnx?v=" + Date.now());
+    const session = await ort.InferenceSession.create("./MLP_WeatherData.onnx?v=" + Date.now());
     const results = await session.run({ input: tensorX });
     const output = results.output.data;
 
@@ -45,7 +45,7 @@ async function runWeatherDeep() {
   const tensorX = new ort.Tensor("float32", x, [1, 10]);
 
   try {
-    const session = await ort.InferenceSession.create("./Weather_Deep.onnx?v=" + Date.now());
+    const session = await ort.InferenceSession.create("./Deep_WeatherData.onnx?v=" + Date.now());
     const results = await session.run({ input: tensorX });
     const output = results.output.data;
 
