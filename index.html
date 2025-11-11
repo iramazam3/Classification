@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weather Classification (MLP & Deep Learning with two layers)</title>
+  <title>Weather Type Classification</title>
 
   <!-- ONNX Runtime JS -->
   <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
@@ -85,7 +85,7 @@
 </head>
 
 <body>
-  <h1>Weather Classification (MLP & Deep Learning with two layers)</h1>
+  <h1>Weather Type Classification</h1>
 
   <div id="input-area">
     <h2>Enter Weather Features</h2>
@@ -128,7 +128,7 @@
 
     <div style="margin-top: 15px;">
       <button id="btnMLP" class="btn" onclick="runWeatherMLP()" disabled>Run MLP Model</button>
-      <button id="btnDeep" class="btn" onclick="runWeatherDeep()" disabled>Run Deep Learning Model</button>
+      <button id="btnDeep" class="btn" onclick="runWeatherDeep()" disabled>Run Deep Learning Model with 2 Layers</button>
     </div>
   </div>
 
@@ -142,7 +142,7 @@
 
     <div class="model-box">
       <div id="predictionsDeep">
-        <h3>Deep Learning Model Output</h3>
+        <h3>Deep Learning Model with 2 Layers Output</h3>
         <p>Predicted weather will appear here.</p>
       </div>
     </div>
