@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weather Classification (MLP & Deep Learning)</title>
+  <title>Weather Classification (MLP & Deep Learning with 2 Layers)</title>
 
   <!-- ONNX Runtime JS -->
   <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
@@ -49,8 +49,13 @@
       margin: 8px;
     }
 
-    .btn:hover {
+    .btn:hover:enabled {
       background-color: #2c5282;
+    }
+
+    .btn:disabled {
+      background-color: #a0aec0;
+      cursor: not-allowed;
     }
 
     #input-area {
@@ -76,18 +81,6 @@
       width: 45%;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: center;
-    }
   </style>
 </head>
 
@@ -104,6 +97,7 @@
 
     <label>Cloud Cover: </label>
     <select id="input4">
+      <option value="">--Select--</option>
       <option value="0">Clear</option>
       <option value="1">Overcast</option>
       <option value="2">Cloudy</option>
@@ -115,6 +109,7 @@
 
     <label>Season: </label>
     <select id="input7">
+      <option value="">--Select--</option>
       <option value="0">Summer</option>
       <option value="1">Spring</option>
       <option value="2">Autumn</option>
@@ -125,14 +120,15 @@
 
     <label>Location: </label>
     <select id="input9">
+      <option value="">--Select--</option>
       <option value="0">Coastal</option>
       <option value="1">Inland</option>
       <option value="2">Mountain</option>
     </select><br>
 
     <div style="margin-top: 15px;">
-      <button class="btn" onclick="runWeatherMLP()">Run MLP Model</button>
-      <button class="btn" onclick="runWeatherDeep()">Run Deep Learning Model with 2 Layers</button>
+      <button id="btnMLP" class="btn" onclick="runWeatherMLP()" disabled>Run MLP Model</button>
+      <button id="btnDeep" class="btn" onclick="runWeatherDeep()" disabled>Run Deep Learning Model</button>
     </div>
   </div>
 
@@ -151,5 +147,31 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // Enable buttons only when all inputs have values
+    function validateInputs() {
+      let allFilled = true;
+      for (let i = 0; i < 10; i++) {
+        const el = document.getElementById(`input${i}`);
+        if (el.tagName === "SELECT") {
+          if (el.value === "") allFilled = false;
+        } else {
+          if (el.value === "") allFilled = false;
+        }
+      }
+
+      document.getElementById("btnMLP").disabled = !allFilled;
+      document.getElementById("btnDeep").disabled = !allFilled;
+    }
+
+    // Attach listener to all inputs
+    window.addEventListener("DOMContentLoaded", () => {
+      for (let i = 0; i < 10; i++) {
+        document.getElementById(`input${i}`).addEventListener("input", validateInputs);
+        document.getElementById(`input${i}`).addEventListener("change", validateInputs);
+      }
+    });
+  </script>
 </body>
 </html>
