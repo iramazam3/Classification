@@ -1,61 +1,51 @@
-// Run MLP model
-async function runWeatherMLP() {
+// Collect inputs as Float32Array
+function collectInputs() {
   const x = new Float32Array(10);
   for (let i = 0; i < 10; i++) {
     x[i] = parseFloat(document.getElementById(`input${i}`).value) || 0;
   }
-
-  const tensorX = new ort.Tensor("float32", x, [1, 10]);
-
-  try {
-    const session = await ort.InferenceSession.create("./MLP_WeatherData.onnx");
-    const results = await session.run({ input: tensorX });
-    const output = results.output.data;
-
-    // Get index of highest output value
-    const predictedIndex = output.indexOf(Math.max(...output));
-    const classes = ["Cloudy", "Rainy", "Snowy", "Sunny"]; 
-    const predictedClass = classes[predictedIndex];
-
-    // Render prediction
-    const predictions = document.getElementById("predictionsMLP");
-    predictions.innerHTML = `
-      <h3>MLP Model Prediction</h3>
-      <p><b>Predicted Weather:</b> ${predictedClass}</p>`;
-  } catch (e) {
-    console.error("ONNX runtime error:", e);
-    alert("Error: " + e.message);
-  }
+  return x;
 }
 
-
-
-// Run Deep Learning model
-async function runWeatherDeep() {
-  const x = new Float32Array(10);
-  for (let i = 0; i < 10; i++) {
-    x[i] = parseFloat(document.getElementById(`input${i}`).value) || 0;
-  }
-
-  const tensorX = new ort.Tensor("float32", x, [1, 10]);
+// Run selected model
+async function runSelectedModel() {
+  const modelFile = document.getElementById("modelSelect").value;
+  const outputText = document.getElementById("outputText");
+  const btn = document.getElementById("runBtn");
 
   try {
-    const session = await ort.InferenceSession.create("./Deep_WeatherData.onnx");
-    const results = await session.run({ input: tensorX });
-    const output = results.output.data;
+    btn.disabled = true;
+    outputText.textContent = `Loading ${modelFile}...`;
 
-    // Get index of highest output value
+    const x = collectInputs();
+    const tensorX = new ort.Tensor("float32", x, [1, 10]);
+
+    const session = await ort.InferenceSession.create(`./${modelFile}?v=${Date.now()}`);
+    const inputName = session.inputNames[0] || "input";
+    const results = await session.run({ [inputName]: tensorX });
+
+    const firstOutput = results[session.outputNames?.[0]] || Object.values(results)[0];
+    const output = firstOutput.data;
+
+    // Get predicted class
     const predictedIndex = output.indexOf(Math.max(...output));
     const classes = ["Cloudy", "Rainy", "Snowy", "Sunny"];
     const predictedClass = classes[predictedIndex];
 
-    // Render prediction
-    const predictions = document.getElementById("predictionsDeep");
-    predictions.innerHTML = `
-      <h3>Deep Learning Model Prediction</h3>
-      <p><b>Predicted Weather:</b> ${predictedClass}</p>`;
+    // Display result
+    outputText.innerHTML = `
+      <div><b>Model:</b> ${modelFile.replace(".onnx","")}</div>
+      <div><b>Predicted Weather:</b> ${predictedClass}</div>
+    `;
   } catch (e) {
     console.error("ONNX runtime error:", e);
-    alert("Error: " + e.message);
+    outputText.innerHTML = `<span style="color:red;">Error: ${e.message}</span>`;
+  } finally {
+    validateInputs();
   }
 }
+
+// Attach to button
+window.addEventListener("load", () => {
+  document.getElementById("runBtn").addEventListener("click", runSelectedModel);
+});
