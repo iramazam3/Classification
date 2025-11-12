@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Weather Type Classification</title>
 
-  <!-- ONNX Runtime JS -->
+  <!-- ONNX Runtime -->
   <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
-  <script src="index.js"></script>
+  <script defer src="index.js"></script>
 
   <style>
     body {
@@ -21,9 +21,7 @@
       color: #2b6cb0;
     }
 
-    h2 {
-      color: #2d3748;
-    }
+    h2 { color: #2d3748; }
 
     label {
       display: inline-block;
@@ -39,6 +37,15 @@
       border-radius: 4px;
     }
 
+    #input-area {
+      margin: auto;
+      padding: 20px;
+      width: 70%;
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
     .btn {
       background-color: #2b6cb0;
       color: white;
@@ -49,37 +56,16 @@
       margin: 8px;
     }
 
-    .btn:hover:enabled {
-      background-color: #2c5282;
-    }
+    .btn:hover:enabled { background-color: #2c5282; }
+    .btn:disabled { background-color: #a0aec0; cursor: not-allowed; }
 
-    .btn:disabled {
-      background-color: #a0aec0;
-      cursor: not-allowed;
-    }
-
-    #input-area {
-      margin: auto;
-      padding: 20px;
-      width: 70%;
-      border-radius: 10px;
-      background: white;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    #models {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 30px;
-    }
-
-    .model-box {
+    #result {
+      margin-top: 20px;
       background: #fff;
-      padding: 20px;
+      padding: 15px;
       border: 1px solid #ccc;
       border-radius: 10px;
-      width: 45%;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
   </style>
 </head>
@@ -127,29 +113,22 @@
     </select><br>
 
     <div style="margin-top: 15px;">
-      <button id="btnMLP" class="btn" onclick="runWeatherMLP()" disabled>Run MLP Model</button>
-      <button id="btnDeep" class="btn" onclick="runWeatherDeep()" disabled>Run Deep Learning Model with 2 Layers</button>
-    </div>
-  </div>
-
-  <div id="models">
-    <div class="model-box">
-      <div id="predictionsMLP">
-        <h3>MLP Model Output</h3>
-        <p>Predicted weather will appear here.</p>
-      </div>
+      <label for="modelSelect"><b>Model:</b></label>
+      <select id="modelSelect">
+        <option value="MLP_WeatherData.onnx">MLP Model</option>
+        <option value="Deep_WeatherData.onnx">Deep Learning (2 Layers)</option>
+      </select>
+      <button id="runBtn" class="btn" disabled>Run Selected Model</button>
     </div>
 
-    <div class="model-box">
-      <div id="predictionsDeep">
-        <h3>Deep Learning Model with 2 Layers Output</h3>
-        <p>Predicted weather will appear here.</p>
-      </div>
+    <div id="result">
+      <b>Output:</b>
+      <div id="outputText">Enter all inputs and select a model.</div>
     </div>
   </div>
 
   <script>
-    // Enable buttons only when all inputs have values
+    // Enable button only when all inputs are filled
     function validateInputs() {
       let allFilled = true;
       for (let i = 0; i < 10; i++) {
@@ -160,9 +139,7 @@
           if (el.value === "") allFilled = false;
         }
       }
-
-      document.getElementById("btnMLP").disabled = !allFilled;
-      document.getElementById("btnDeep").disabled = !allFilled;
+      document.getElementById("runBtn").disabled = !allFilled;
     }
 
     // Attach listener to all inputs
